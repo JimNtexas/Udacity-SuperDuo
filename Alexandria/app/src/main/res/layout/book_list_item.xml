@@ -4,6 +4,8 @@
                 android:layout_height="?android:attr/listPreferredItemHeight"
                 android:padding="6dip" >
 
+    <!-- todo:   Consider adding android:layout_alignParentEnd="true" to better support right-to-left layouts (at line 21) -->
+
     <ImageView
         android:id="@+id/fullBookCover"
         android:layout_width="wrap_content"
@@ -13,6 +15,8 @@
         android:layout_marginRight="6dip"
         android:contentDescription="@string/book_cover"
         android:src="@drawable/ic_launcher" />
+
+    <!-- TODO:  Consider adding android:layout_toEndOf="@id/fullBookCover" to better support right-to-left layouts (at line 24) -->
 
     <TextView
         android:id="@+id/listBookTitle"

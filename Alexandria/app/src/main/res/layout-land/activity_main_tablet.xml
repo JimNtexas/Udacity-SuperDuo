@@ -21,6 +21,8 @@
             android:layout_weight="1">
         </FrameLayout>
 
+        <!-- The id "right_container" in layout "activity_main_tablet" is missing from the following layout configurations: layout (present in layout-land) -->
+
     </LinearLayout>
 
 

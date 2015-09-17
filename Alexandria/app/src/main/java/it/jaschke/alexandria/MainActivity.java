@@ -90,6 +90,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         title = getString(titleId);
     }
 
+    //TODO:  Method invocation 'actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD)' at line 95 may produce 'java.lang.NullPointerException'
     public void restoreActionBar() {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);

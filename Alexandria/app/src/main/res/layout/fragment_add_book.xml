@@ -2,6 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" tools:context="it.jaschke.alexandria.AddBook">
 
+    <!-- TODO:  This RelativeLayout layout or its FrameLayout parent is useless (at line 5) -->
+
     <RelativeLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
@@ -17,6 +19,7 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true">
 
+            <!-- TODO:  When you define paddingRight you should probably also define paddingLeft for right-to-left symmetry -->
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

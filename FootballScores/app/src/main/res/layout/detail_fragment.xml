@@ -40,5 +40,6 @@
         android:paddingLeft="120dp"
         android:paddingRight="120dp"/>
     </FrameLayout>
+    <!-- Consider adding android:drawableStart="@android:drawable/ic_menu_share" to better support right-to-left layouts -->
 
 </LinearLayout>

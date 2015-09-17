@@ -2,6 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" tools:context="it.jaschke.alexandria.AddBook">
 
+    <!-- todo:  Use "start" instead of "left" to ensure correct behavior in right-to-left locales (at line 9) -->
+
     <RelativeLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
@@ -92,6 +94,7 @@
             android:layout_alignStart="@+id/bookCover"
             android:layout_marginTop="10dp"/>
 
+        <!-- todo:   LinearLayout-15 can overlap @id/scan_button if @string/scan_button, LinearLayout-15 grow due to localized text expansion (at line 95) -->
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="wrap_content"

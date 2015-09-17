@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- The project references RTL attributes, but does not explicitly enable or disable RTL support with android:supportsRtl in the manifest (at line 1)  -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="it.jaschke.alexandria" >
 

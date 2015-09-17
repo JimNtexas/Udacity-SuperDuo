@@ -15,6 +15,7 @@ import android.view.SurfaceView;
 import java.io.IOException;
 
 /** A basic Camera preview class */
+//TODO: Custom view CameraPreview is missing constructor used by tools: (Context) or (Context,AttributeSet) or (Context,AttributeSet,int) (at line 18)
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
     private SurfaceHolder mHolder;
     private Camera mCamera;

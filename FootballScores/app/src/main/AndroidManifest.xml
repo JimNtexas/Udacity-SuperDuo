@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="barqsoft.footballscores" >
 
     <uses-permission
@@ -23,7 +24,8 @@
 
         <provider
             android:name=".ScoresProvider"
-            android:authorities="barqsoft.footballscores" />
+            android:authorities="barqsoft.footballscores"
+            tools:ignore="ExportedContentProvider" />
 
         <activity
             android:name=".AboutActivity"

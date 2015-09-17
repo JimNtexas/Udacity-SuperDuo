@@ -83,7 +83,7 @@ public class BookService extends IntentService {
                 null, // values for "where" clause
                 null  // sort order
         );
-
+        //TODO:  Method invocation 'bookEntry.getCount()' at line 87 may produce 'java.lang.NullPointerException'
         if(bookEntry.getCount()>0){
             bookEntry.close();
             return;

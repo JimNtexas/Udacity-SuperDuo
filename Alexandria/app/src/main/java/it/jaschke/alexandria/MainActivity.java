@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import it.jaschke.alexandria.api.Callback;
+import it.jaschke.alexandria.services.BookService;
 
 
 public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks, Callback {
@@ -156,8 +157,12 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         @Override
         public void onReceive(Context context, Intent intent) {
             if(intent.getStringExtra(MESSAGE_KEY)!=null){
-                Toast.makeText(MainActivity.this, intent.getStringExtra(MESSAGE_KEY), Toast.LENGTH_LONG).show();
-            }
+                //todo: refactor
+                Toast.makeText(MainActivity.this, intent.getStringExtra(MESSAGE_KEY), Toast.LENGTH_LONG).show();  //TODO:  use a snack here instead of a toast
+            } else
+                if(intent.getStringExtra(BookService.SERVICE_ERROR) != null) {
+                    Toast.makeText(MainActivity.this, intent.getStringExtra(BookService.SERVICE_ERROR), Toast.LENGTH_LONG).show();
+                }
         }
     }
 

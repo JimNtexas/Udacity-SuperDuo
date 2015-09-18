@@ -35,8 +35,8 @@ public class BookService extends IntentService {
 
     public static final String FETCH_BOOK = "it.jaschke.alexandria.services.action.FETCH_BOOK";
     public static final String DELETE_BOOK = "it.jaschke.alexandria.services.action.DELETE_BOOK";
-
     public static final String EAN = "it.jaschke.alexandria.services.extra.EAN";
+    public static final String SERVICE_ERROR = "it.jaschke.alexandria.services.extra.extra.SERVICE_ERROR";
 
     public BookService() {
         super("Alexandria");
@@ -73,7 +73,10 @@ public class BookService extends IntentService {
     private void fetchBook(String ean) {
         Log.i(TAG, "fetching:" + ean);
         if(ean.length()!=13){
-            Log.d(TAG, "ean not correct length: " + ean.length());
+            String format = getResources().getString(R.string.isbn_size_error);
+            String errmsg = String.format(format, ean.length());
+            Log.d(TAG, errmsg);
+            postErrorMessage(errmsg);
             return;
         }
 
@@ -131,7 +134,9 @@ public class BookService extends IntentService {
             }
             bookJsonString = buffer.toString();
         } catch (Exception e) {
-            Log.e(TAG, "Error ", e);
+            Log.e(TAG, "error: " + e.getMessage());
+            postErrorMessage(e.getLocalizedMessage());
+            return;
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -141,6 +146,8 @@ public class BookService extends IntentService {
                     reader.close();
                 } catch (final IOException e) {
                     Log.e(TAG, "Error closing stream", e);
+                    postErrorMessage(e.getLocalizedMessage());
+                    return;
                 }
             }
 
@@ -200,7 +207,17 @@ public class BookService extends IntentService {
 
         } catch (JSONException e) {
             Log.e(TAG, "Error ", e);
+            postErrorMessage(e.getLocalizedMessage());
+            return;
         }
+    }
+
+    private void postErrorMessage(String msg) {
+        Intent messageIntent = new Intent(MainActivity.MESSAGE_EVENT);
+        String serviceError = getResources().getString(R.string.book_service_error) + msg;
+
+        messageIntent.putExtra(SERVICE_ERROR, serviceError);
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(messageIntent);
     }
 
     private void writeBackBook(String ean, String title, String subtitle, String desc, String imgUrl) {

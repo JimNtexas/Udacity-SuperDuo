@@ -74,7 +74,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             public void afterTextChanged(Editable s) {
 
                 String ean =s.toString();
-                setScanOrSearchBtn(ean.length() > 0);
+                //setScanOrSearchBtn(ean.length() > 0);
                 //catch isbn10 numbers
                 if(ean.length()==10 && !ean.startsWith("978")){
                     ean="978"+ean;

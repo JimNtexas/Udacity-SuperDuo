@@ -19,14 +19,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import it.jaschke.alexandria.data.AlexandriaContract;
 import it.jaschke.alexandria.services.BookService;
 import it.jaschke.alexandria.services.DownloadImage;
 
 
 public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
-    private static final String TAG = "INTENT_TO_SCAN_ACTIVITY";
+    private static final String TAG = "ALEX_INTENT_TO_SCAN_ACTIVITY";
     private EditText ean;
     private final int LOADER_ID = 1;
     private View rootView;

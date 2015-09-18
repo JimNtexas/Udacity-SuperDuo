@@ -1,6 +1,7 @@
 package it.jaschke.alexandria;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -68,7 +70,6 @@ public class NavigationDrawerFragment extends Fragment {
         // drawer. See PREF_USER_LEARNED_DRAWER for details.
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mUserLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);
-
 
 
         if (savedInstanceState != null) {
@@ -130,6 +131,7 @@ public class NavigationDrawerFragment extends Fragment {
 
         // set a custom shadow that overlays the main content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+        mDrawerLayout.setScrimColor(getResources().getColor(R.color.scrim_color));
         // set up the drawer's list view with items and click listener
 
         ActionBar actionBar = getActionBar();
@@ -171,7 +173,14 @@ public class NavigationDrawerFragment extends Fragment {
                     sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply();
                 }
 
+                DismissKeyboard();
+
                 getActivity().supportInvalidateOptionsMenu(); // calls onPrepareOptionsMenu()
+            }
+
+            private void DismissKeyboard() {
+                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
             }
         };
 
@@ -191,6 +200,8 @@ public class NavigationDrawerFragment extends Fragment {
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
     }
+
+
 
     private void selectItem(int position) {
         mCurrentSelectedPosition = position;

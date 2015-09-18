@@ -31,7 +31,7 @@ import it.jaschke.alexandria.data.AlexandriaContract;
  */
 public class BookService extends IntentService {
 
-    private final String LOG_TAG = BookService.class.getSimpleName();
+    private final String TAG = "Alex:" + BookService.class.getSimpleName();
 
     public static final String FETCH_BOOK = "it.jaschke.alexandria.services.action.FETCH_BOOK";
     public static final String DELETE_BOOK = "it.jaschke.alexandria.services.action.DELETE_BOOK";
@@ -71,8 +71,9 @@ public class BookService extends IntentService {
      * parameters.
      */
     private void fetchBook(String ean) {
-
+        Log.i(TAG, "fetching:" + ean);
         if(ean.length()!=13){
+            Log.d(TAG, "ean not correct length: " + ean.length());
             return;
         }
 
@@ -85,6 +86,7 @@ public class BookService extends IntentService {
         );
         //TODO:  Method invocation 'bookEntry.getCount()' at line 87 may produce 'java.lang.NullPointerException'
         if(bookEntry.getCount()>0){
+            Log.i(TAG, "no book found");
             bookEntry.close();
             return;
         }
@@ -129,7 +131,7 @@ public class BookService extends IntentService {
             }
             bookJsonString = buffer.toString();
         } catch (Exception e) {
-            Log.e(LOG_TAG, "Error ", e);
+            Log.e(TAG, "Error ", e);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -138,7 +140,7 @@ public class BookService extends IntentService {
                 try {
                     reader.close();
                 } catch (final IOException e) {
-                    Log.e(LOG_TAG, "Error closing stream", e);
+                    Log.e(TAG, "Error closing stream", e);
                 }
             }
 
@@ -197,7 +199,7 @@ public class BookService extends IntentService {
             }
 
         } catch (JSONException e) {
-            Log.e(LOG_TAG, "Error ", e);
+            Log.e(TAG, "Error ", e);
         }
     }
 

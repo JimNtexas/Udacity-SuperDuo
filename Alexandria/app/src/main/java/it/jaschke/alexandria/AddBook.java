@@ -3,6 +3,7 @@ package it.jaschke.alexandria;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,8 +38,6 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     private String mScanFormat = "Format:";
     private String mScanContents = "Contents:";
 
-
-
     public AddBook(){
     }
 
@@ -50,11 +50,15 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     }
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+    }
+
+    @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.fragment_add_book, container, false);
         ean = (EditText) rootView.findViewById(R.id.ean);
-
         ean.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -68,7 +72,9 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
             @Override
             public void afterTextChanged(Editable s) {
+
                 String ean =s.toString();
+                setScanOrSearchBtn(ean.length() > 0);
                 //catch isbn10 numbers
                 if(ean.length()==10 && !ean.startsWith("978")){
                     ean="978"+ean;
@@ -85,6 +91,8 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                 AddBook.this.restartLoader();
             }
         });
+
+
 
         rootView.findViewById(R.id.scan_button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,6 +137,12 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         }
 
         return rootView;
+    }
+
+    private void setScanOrSearchBtn(boolean showSearchBtn) {
+        Log.i(TAG, "show search: " + showSearchBtn);
+        rootView.findViewById(R.id.scan_button).setVisibility(showSearchBtn ? View.GONE : View.VISIBLE);
+        rootView.findViewById(R.id.srch_button).setVisibility(showSearchBtn ? View.VISIBLE : View.GONE);
     }
 
     private void restartLoader(){

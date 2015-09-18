@@ -11,7 +11,10 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_settings">Settings</string>
     <string name="scan_button">Scan</string>
-    <string name="input_hint">Insert ISBN-13. Digits only.</string>
+    <string name="scan_hint">Click to scan an ISBN barcode</string>
+    <string name="search_button">Search</string>
+    <string name="search_hint">Click to search for this ISBN Number</string>
+    <string name="input_hint">Enter 10 or 13 digits, or click \'Scan\'.</string>
     <string name="book_cover">Bookcover</string>
 
     <string name="ok_button">Next</string>
@@ -24,7 +27,5 @@
     <string name="action_share">Share</string>
     <string name="back_button">go back</string>
     <string name="share_text">A must read book: </string>
-
-<!-- TODO: Remove or change this placeholder text -->
     <string name="about_text">The original version of this app was written by Sascha Jaschke.  This version was modified by Jim Howard\n\nAll book information (Title, Cover, etc) is provided by the Google Books API.  </string>
 </resources>

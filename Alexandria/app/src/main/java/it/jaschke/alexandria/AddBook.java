@@ -99,7 +99,9 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             public void onClick(View v) {
                 CaptureFragment fragment = CaptureFragment.newInstance();
                 android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.container,fragment, fragment.getClass().getSimpleName()).commit();
+                ft.replace(R.id.container,fragment, fragment.getClass().getSimpleName());
+                ft.addToBackStack(null);
+                ft.commit();
             }
 
         });
@@ -134,6 +136,10 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         Log.i(TAG, "show search: " + showSearchBtn);
         rootView.findViewById(R.id.scan_button).setVisibility(showSearchBtn ? View.GONE : View.VISIBLE);
         rootView.findViewById(R.id.srch_button).setVisibility(showSearchBtn ? View.VISIBLE : View.GONE);
+    }
+
+    void imageCaptured(String filename) {
+        Log.d(TAG, "Captured image file: " + filename);
     }
 
     private void restartLoader(){

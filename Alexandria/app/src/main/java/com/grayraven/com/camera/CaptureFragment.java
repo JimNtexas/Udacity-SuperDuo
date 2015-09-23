@@ -25,10 +25,26 @@ import it.jaschke.alexandria.R;
 public class CaptureFragment extends android.support.v4.app.Fragment
         implements SurfaceHolder.Callback {
 
-    static final String CAPTURED_IMAGE_FILENAME = "captured_image";
+    public static final String CAPTURED_IMAGE_FILENAME = "captured_image";
+    private static final String TAG = "CaptureFragment";
 
+    public interface ImageCaptured {
+        void imageCaptured(String filename);
+    }
 
-    private static final String TAG = "CameraActivityFragement";
+    ImageCaptured imageCapturedCb;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            imageCapturedCb = (ImageCaptured) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement ImageCaptured");
+        }
+    }
 
     Camera mCamera;
     Context mContext;
@@ -172,15 +188,15 @@ public class CaptureFragment extends android.support.v4.app.Fragment
                     result = false;
                 }
 
-              /*  if(result) {
-                    ((CameraActivity)getActivity()).setScanResult(true);
-                    Intent i = new Intent(getActivity(), MainActivity.class);
-                    startActivity(i);
+                if(result) {
+                   Toast.makeText(getActivity(), "Image retrieval success.", Toast.LENGTH_SHORT).show();
+                    imageCapturedCb.imageCaptured(pictureFile.getAbsolutePath());
                 } else {
-                    ((CameraActivity)getActivity()).setScanResult(false);
-                }*/
+                    Toast.makeText(getActivity(), "Image retrieval success.", Toast.LENGTH_LONG).show();
+                }
 
-                Toast.makeText(getActivity(), "Image retrieval success.", Toast.LENGTH_LONG).show();
+
+
             }
         };
     }

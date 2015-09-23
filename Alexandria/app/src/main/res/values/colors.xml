@@ -10,4 +10,5 @@
     <color name="icons">#FFFFFF</color>
     <color name="divider">#B6B6B6</color>
     <color name="scrim_color">#80BBDEFB</color>
+    <color name="control_background">#cc4285f4</color>
 </resources>

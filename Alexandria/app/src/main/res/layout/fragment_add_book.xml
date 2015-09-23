@@ -5,6 +5,7 @@
     <!-- TODO:  This RelativeLayout layout or its FrameLayout parent is useless (at line 5) -->
 
     <RelativeLayout
+        android:id="@+id/add_book_fragment"
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

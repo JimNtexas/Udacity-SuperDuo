@@ -9,9 +9,11 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,7 +23,7 @@ import it.jaschke.alexandria.api.Callback;
 import it.jaschke.alexandria.services.BookService;
 
 
-public class MainActivity extends ActionBarActivity implements  NavigationDrawerFragment.NavigationDrawerCallbacks, Callback {
+public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks, Callback {
 
     private static final String TAG = "Alex_MainActivity";
     /**
@@ -38,6 +40,7 @@ public class MainActivity extends ActionBarActivity implements  NavigationDrawer
 
     public static final String MESSAGE_EVENT = "MESSAGE_EVENT";
     public static final String MESSAGE_KEY = "MESSAGE_EXTRA";
+    private DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,13 +56,31 @@ public class MainActivity extends ActionBarActivity implements  NavigationDrawer
         IntentFilter filter = new IntentFilter(MESSAGE_EVENT);
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReciever,filter);
 
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
         navigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         title = getTitle();
 
         // Set up the drawer.
         navigationDrawerFragment.setUp(R.id.navigation_drawer,
-                    (DrawerLayout) findViewById(R.id.drawer_layout));
+                (DrawerLayout) findViewById(R.id.drawer_layout));
+
+
+
+    }
+
+
+    @Override
+    protected void onResume() {
+        Log.d(TAG, "Main on resume");
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "Main on pause");
     }
 
     @Override
@@ -154,6 +175,7 @@ public class MainActivity extends ActionBarActivity implements  NavigationDrawer
 
     }
 
+
     private class MessageReciever extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -168,6 +190,7 @@ public class MainActivity extends ActionBarActivity implements  NavigationDrawer
     }
 
     public void goBack(View view){
+
         getSupportFragmentManager().popBackStack();
     }
 
@@ -177,11 +200,13 @@ public class MainActivity extends ActionBarActivity implements  NavigationDrawer
                 >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 
+    /**
+     * Display the nav drawer when user clicks the back button
+     * this should reduce the chance of the app disappearing if the user clicks the back arrow
+     */
     @Override
     public void onBackPressed() {
-        if(getSupportFragmentManager().getBackStackEntryCount()<2){
-            finish();
-        }
+        drawerLayout.openDrawer(GravityCompat.START);
         super.onBackPressed();
     }
 

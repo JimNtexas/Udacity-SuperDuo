@@ -145,20 +145,20 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         return rootView;
     }
 
-    private void startBookSearch(String ean) {
-
+    private void startBookSearch(String isbn) {
+        Log.d(TAG, "startBookSearch: " + ean);
         //catch isbn10 numbers
-        if(ean.length()==10 && !ean.startsWith("978")){
-            ean="978"+ean;
+        if(isbn.length()==10 && !isbn.startsWith("978")){
+            isbn = "978" + isbn;
         }
-        if(ean.length() != 13){
-            Log.e(TAG, "Incorrect length passed to startBookSearch:" + ean.length());
+        if(isbn.length() != 13){
+            Log.e(TAG, "Incorrect length passed to startBookSearch:" + isbn.length());  //this should be impossible
             return;
         }
         //Once we have an ISBN, start a book intent
         clearFields();
         Intent bookIntent = new Intent(getActivity(), BookService.class);
-        bookIntent.putExtra(BookService.EAN, ean);
+        bookIntent.putExtra(BookService.EAN, isbn);
         bookIntent.setAction(BookService.FETCH_BOOK);
         getActivity().startService(bookIntent);
         AddBook.this.restartLoader();
@@ -184,6 +184,12 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         if(!isbn.isEmpty()) {
             ean.setText(isbn);
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(TAG, "addbook paused");
     }
 
     private String getIsbnFromPrefs() {

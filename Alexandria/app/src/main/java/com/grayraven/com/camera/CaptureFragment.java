@@ -2,6 +2,7 @@ package com.grayraven.com.camera;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
@@ -21,7 +22,6 @@ import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -30,25 +30,13 @@ import it.jaschke.alexandria.R;
 public class CaptureFragment extends android.support.v4.app.Fragment
         implements SurfaceHolder.Callback {
 
-    public static final String CAPTURED_IMAGE_FILENAME = "captured_image";
+    public static final String ISBN_STRING = "shared_pref_isbn";
     private static final String TAG = "CaptureFragment";
 
-    public interface ImageCaptured {
-        void imageCaptured(String filename);
-    }
-
-    ImageCaptured imageCapturedCb;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        // This makes sure that the container activity has implemented
-        // the callback interface. If not, it throws an exception
-        try {
-            imageCapturedCb = (ImageCaptured) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement ImageCaptured");
-        }
     }
 
     Camera mCamera;
@@ -69,7 +57,7 @@ public class CaptureFragment extends android.support.v4.app.Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        saveIsbn("");
         return inflater.inflate(R.layout.fragment_camera, container, false);
     }
 
@@ -115,6 +103,7 @@ public class CaptureFragment extends android.support.v4.app.Fragment
 
     public void setCamera(Camera camera) {
         stopPreviewAndFreeCamera();
+        saveIsbn("");
         mHolder = mSurfaceView.getHolder();
         mHolder.addCallback(this);
         mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
@@ -170,27 +159,30 @@ public class CaptureFragment extends android.support.v4.app.Fragment
             public void onPictureTaken(byte[] data, Camera camera) {
 
                 Bitmap bitmap = BitmapFactory.decodeByteArray(data,0, data.length);
-                boolean result = (detectBarcode(bitmap));
-
+                String isbn = (detectBarcode(bitmap));
+                boolean result = !isbn.isEmpty();
                 if(result) {
+                   saveIsbn(isbn);
                    Toast.makeText(getActivity(), "Image retrieval success.", Toast.LENGTH_SHORT).show();
+                    Activity activity = getActivity();
+                    Log.d(TAG, activity.getLocalClassName());
+                    getActivity().getSupportFragmentManager().popBackStackImmediate();
                 } else {
+                    saveIsbn("");
                     Toast.makeText(getActivity(), "Image retrieval failed.", Toast.LENGTH_LONG).show();
                     stopPreviewAndFreeCamera();
                     setCamera(mCamera);
                 }
-
-
-
             }
         };
     }
 
-    private boolean detectBarcode(Bitmap bitmap) {
+    private String detectBarcode(Bitmap bitmap) {
 
+        String isbn = "";
         if(bitmap == null) {
             Log.d(TAG, "barcode bitmap was null");
-            return false;
+            return isbn;
         }
 
         BarcodeDetector detector =
@@ -199,7 +191,7 @@ public class CaptureFragment extends android.support.v4.app.Fragment
                         .build();
         if(!detector.isOperational()){
             Log.e(TAG,"Could not set up the detector!");
-            return false;
+            return isbn;
         }
 
         Frame frame = new Frame.Builder().setBitmap(bitmap).build();
@@ -207,7 +199,7 @@ public class CaptureFragment extends android.support.v4.app.Fragment
 
         if(barcodes.size() < 1) {
             Log.d(TAG, "NO BARCODE FOUND");
-            return false;
+            return isbn;
         }
 
         for(int i=0; i < barcodes.size(); i++) {
@@ -217,11 +209,17 @@ public class CaptureFragment extends android.support.v4.app.Fragment
             Log.d(TAG, "display: " +code.displayValue);
             Log.d(TAG, "raw    : " + code.rawValue);
             Log.d(TAG, "format : " + code.valueFormat);
+            isbn = code.displayValue;
         }
 
-        return true;
+        return isbn;
     }
 
+    private void saveIsbn(String isbn) {
+        SharedPreferences prefs = getActivity().getSharedPreferences(getActivity().getLocalClassName(), Context.MODE_PRIVATE);
+        Log.d(TAG, "Saving isbn: " + isbn);
+        prefs.edit().putString(ISBN_STRING, isbn).commit();
+    }
 
     private boolean safeCameraOpen() {
         boolean qOpened = false;
@@ -303,15 +301,4 @@ public class CaptureFragment extends android.support.v4.app.Fragment
         camera.setDisplayOrientation(result);
     }
 
-
-    private File getOutputMediaFile(){
-
-        String path = getActivity().getCacheDir().getAbsolutePath() + File.separator + CAPTURED_IMAGE_FILENAME;
-        File mediaFile = new File(path);
-        if(mediaFile.exists()) {
-            mediaFile.delete();
-            mediaFile = new File(path);
-        }
-        return mediaFile;
-    }
 }

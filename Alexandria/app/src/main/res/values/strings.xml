@@ -29,6 +29,6 @@
     <string name="share_text">A must read book: </string>
     <string name="about_text">The original version of this app was written by Sascha Jaschke.  This version was modified by Jim Howard\n\nAll book information (Title, Cover, etc) is provided by the Google Books API.  </string>
     <string name="book_service_error">Could not locate book due to an error: </string>
-    <string name="isbn_size_error">The isbn number is not 10 or 13 digits: %d </string>
+    <string name="isbn_size_error">The isbn number should be 10 or 13 digits</string>
 
 </resources>

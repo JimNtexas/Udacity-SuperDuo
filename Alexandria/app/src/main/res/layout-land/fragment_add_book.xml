@@ -1,6 +1,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" tools:context="it.jaschke.alexandria.AddBook">
+    android:layout_height="match_parent" tools:context="it.jaschke.alexandria.AddBook"
+    android:windowSoftInputMode="adjustResize">
 
     <!-- todo:  Use "start" instead of "left" to ensure correct behavior in right-to-left locales (at line 9) -->
 
@@ -37,7 +38,20 @@
             android:layout_marginStart="23dp"
             android:layout_alignBottom="@+id/ean"
             android:layout_toRightOf="@+id/ean"
-            android:layout_toEndOf="@+id/ean"/>
+            android:layout_toEndOf="@+id/ean"
+            android:layout_marginRight="16dp"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/search_button"
+            android:clickable="true"
+            android:visibility="visible"
+            android:id="@+id/search_button"
+            android:layout_toRightOf="@id/scan_button"
+            android:layout_alignBottom="@id/scan_button"
+            android:layout_marginRight="16dp"
+             />
 
         <TextView
             android:layout_width="wrap_content"

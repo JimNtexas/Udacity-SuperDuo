@@ -73,8 +73,7 @@ public class BookService extends IntentService {
     private void fetchBook(String ean) {
         Log.i(TAG, "fetching:" + ean);
         if(ean.length()!=13){
-            String format = getResources().getString(R.string.isbn_size_error);
-            String errmsg = String.format(format, ean.length());
+            String errmsg = getResources().getString(R.string.isbn_size_error);
             Log.d(TAG, errmsg);
             postErrorMessage(errmsg);
             return;

@@ -1,9 +1,13 @@
 package it.jaschke.alexandria;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -15,9 +19,12 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.grayraven.com.camera.CaptureFragment;
 
@@ -59,6 +66,8 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
         rootView = inflater.inflate(R.layout.fragment_add_book, container, false);
         ean = (EditText) rootView.findViewById(R.id.ean);
+        final Button btnScan = (Button) rootView.findViewById(R.id.scan_button);
+        final Button btnSearch = (Button) rootView.findViewById(R.id.search_button);
         ean.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -72,44 +81,48 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
             @Override
             public void afterTextChanged(Editable s) {
-
                 String ean =s.toString();
-                //setScanOrSearchBtn(ean.length() > 0);
-                //catch isbn10 numbers
-                if(ean.length()==10 && !ean.startsWith("978")){
-                    ean="978"+ean;
-                }
-                if(ean.length()<13){
-                    clearFields();
-                    return;
-                }
-                //Once we have an ISBN, start a book intent
-                Intent bookIntent = new Intent(getActivity(), BookService.class);
-                bookIntent.putExtra(BookService.EAN, ean);
-                bookIntent.setAction(BookService.FETCH_BOOK);
-                getActivity().startService(bookIntent);
-                AddBook.this.restartLoader();
+                Log.d(TAG, "after text changed ean: " + ean + " - " + ean.length());
+                enableButton(btnScan, ean.length() == 0);
+                enableButton(btnSearch, ean.length() > 0);
             }
         });
-
-
 
         rootView.findViewById(R.id.scan_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 CaptureFragment fragment = CaptureFragment.newInstance();
+                clearIsbnPref();
+                clearFields();
+                hideSoftKeyboard(getActivity());
                 android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.container,fragment, fragment.getClass().getSimpleName());
+                ft.replace(R.id.container, fragment, fragment.getClass().getSimpleName());
                 ft.addToBackStack(null);
                 ft.commit();
             }
 
         });
 
+        rootView.findViewById(R.id.search_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Editable editable = ((EditText) rootView.findViewById(R.id.ean)).getText();
+                String ean = editable.toString();
+                if(!(ean.length() == 10 || ean.length() == 13)) {
+                    Toast.makeText(getActivity(), getResources().getString(R.string.isbn_size_error), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                hideSoftKeyboard(getActivity());
+                startBookSearch(ean);
+            }
+        });
+
         rootView.findViewById(R.id.save_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ean.setText("");
+                clearFields();
+                clearIsbnPref();
             }
         });
 
@@ -132,14 +145,57 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         return rootView;
     }
 
-    private void setScanOrSearchBtn(boolean showSearchBtn) {
-        Log.i(TAG, "show search: " + showSearchBtn);
-        rootView.findViewById(R.id.scan_button).setVisibility(showSearchBtn ? View.GONE : View.VISIBLE);
-        rootView.findViewById(R.id.srch_button).setVisibility(showSearchBtn ? View.VISIBLE : View.GONE);
+    private void startBookSearch(String ean) {
+
+        //catch isbn10 numbers
+        if(ean.length()==10 && !ean.startsWith("978")){
+            ean="978"+ean;
+        }
+        if(ean.length() != 13){
+            Log.e(TAG, "Incorrect length passed to startBookSearch:" + ean.length());
+            return;
+        }
+        //Once we have an ISBN, start a book intent
+        clearFields();
+        Intent bookIntent = new Intent(getActivity(), BookService.class);
+        bookIntent.putExtra(BookService.EAN, ean);
+        bookIntent.setAction(BookService.FETCH_BOOK);
+        getActivity().startService(bookIntent);
+        AddBook.this.restartLoader();
     }
 
-    void imageCaptured(String filename) {
-        Log.d(TAG, "Captured image file: " + filename);
+    private void enableButton(Button button, boolean enabled) {
+        if(button == null) {
+            Log.d(TAG, "attempt to enable null button");
+            return;
+        }
+        button.setClickable(enabled);
+        if (enabled) {
+            button.getBackground().setColorFilter(null);
+        } else {
+            button.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        String isbn = getIsbnFromPrefs();
+        if(!isbn.isEmpty()) {
+            ean.setText(isbn);
+        }
+    }
+
+    private String getIsbnFromPrefs() {
+        SharedPreferences prefs = getActivity().getSharedPreferences(getActivity().getLocalClassName(), Context.MODE_PRIVATE);
+        String isbn = prefs.getString(CaptureFragment.ISBN_STRING, "");
+        return isbn;
+    }
+
+    private void clearIsbnPref() {
+        Log.i(TAG, "Isbn cleared from prefs");
+        SharedPreferences prefs = getActivity().getSharedPreferences(getActivity().getLocalClassName(), Context.MODE_PRIVATE);
+        prefs.edit().putString(CaptureFragment.ISBN_STRING, "").commit();
     }
 
     private void restartLoader(){
@@ -192,6 +248,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
         rootView.findViewById(R.id.save_button).setVisibility(View.VISIBLE);
         rootView.findViewById(R.id.delete_button).setVisibility(View.VISIBLE);
+        clearIsbnPref();
     }
 
     @Override
@@ -213,5 +270,10 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         activity.setTitle(R.string.scan);
+    }
+
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager = (InputMethodManager)  activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
     }
 }

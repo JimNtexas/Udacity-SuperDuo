@@ -53,6 +53,7 @@
                 android:text="@string/test_text"
                 android:layout_gravity="center"
                 android:gravity="center"
+                android:textSize="18sp"
                 android:id="@+id/data_textview"/>
 
         </LinearLayout>

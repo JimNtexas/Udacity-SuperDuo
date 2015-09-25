@@ -25,3 +25,9 @@ proguard/
 
 # Log Files
 *.log
+
+# iml Files
+*.iml
+
+Alexandria/.idea/
+/*FootballScores/.idea/

@@ -32,6 +32,9 @@ import it.jaschke.alexandria.data.AlexandriaContract;
 import it.jaschke.alexandria.services.BookService;
 import it.jaschke.alexandria.services.DownloadImage;
 
+import static com.grayraven.com.camera.Utilities.internetAvailable;
+import static com.grayraven.com.camera.Utilities.showAlertDialog;
+
 
 public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = "ALEX_INTENT_TO_SCAN_ACTIVITY";
@@ -79,6 +82,8 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                 //no need
             }
 
+            //note: I found the original implementation of afterTextChanged to cause user confusion.
+            // I now require the user to click the search button to launch the book service
             @Override
             public void afterTextChanged(Editable s) {
                 String ean =s.toString();
@@ -112,7 +117,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                     Toast.makeText(getActivity(), getResources().getString(R.string.isbn_size_error), Toast.LENGTH_SHORT).show();
                     return;
                 }
-                hideSoftKeyboard(getActivity());
+                hideSoftKeyboard(getActivity());  //NOTE:  The softkeyboard was often in the way of the user, even when it wasn't needed
                 startBookSearch(ean);
             }
         });
@@ -121,11 +126,13 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             @Override
             public void onClick(View view) {
                 ean.setText("");
-                clearFields();
+                clearFields(); // NOTE: The original implementation did not clear the book details when a new search screen was loaded via the next button
                 clearIsbnPref();
             }
         });
 
+        /*Todo: I've fixed a crashing bug in the service that could happen here is the user hits the garbage can before saving a book, but I need to update the gui so that
+        it better handles the case of the user discovering a book and then hitting the garbage can or cancel links at the bottom of the display.*/
         rootView.findViewById(R.id.delete_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -147,6 +154,12 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
     private void startBookSearch(String isbn) {
         Log.d(TAG, "startBookSearch: " + ean);
+
+        if(!internetAvailable(getActivity())) {
+            showAlertDialog(R.string.no_internet_error, getActivity());
+            return;
+        }
+
         //catch isbn10 numbers
         if(isbn.length()==10 && !isbn.startsWith("978")){
             isbn = "978" + isbn;
@@ -279,6 +292,9 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     }
 
     public static void hideSoftKeyboard(Activity activity) {
+        if(activity == null) {
+            return;
+        }
         InputMethodManager inputMethodManager = (InputMethodManager)  activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
     }

@@ -61,7 +61,7 @@ public class BookService extends IntentService {
      * parameters.
      */
     private void deleteBook(String ean) {
-        if(ean!=null) {
+        if(ean!=null && (!ean.isEmpty())) { //Note: fixed a crashing bug caused when the caller passed an empty string here
             getContentResolver().delete(AlexandriaContract.BookEntry.buildBookUri(Long.parseLong(ean)), null, null);
         }
     }
@@ -207,7 +207,6 @@ public class BookService extends IntentService {
         } catch (JSONException e) {
             Log.e(TAG, "Error ", e);
             postErrorMessage(e.getLocalizedMessage());
-            return;
         }
     }
 

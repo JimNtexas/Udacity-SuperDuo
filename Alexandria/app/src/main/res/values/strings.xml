@@ -30,5 +30,9 @@
     <string name="about_text">The original version of this app was written by Sascha Jaschke.  This version was modified by Jim Howard\n\nAll book information (Title, Cover, etc) is provided by the Google Books API.  </string>
     <string name="book_service_error">Could not locate book due to an error: </string>
     <string name="isbn_size_error">The isbn number should be 10 or 13 digits</string>
+    <string name="alert_dlg_title">Problem Detected</string>
+    <string name="no_internet_error">Alexandria is sorry, but she can\'t seem to connect to the internet to perform this search</string>
+    <string name="no_camera_error">Alexandria is sorry, but she can\'t find a suitable camera</string>
+    <string name="capture_image">Take Picture</string>
 
 </resources>

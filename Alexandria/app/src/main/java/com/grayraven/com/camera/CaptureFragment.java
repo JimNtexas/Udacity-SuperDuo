@@ -27,6 +27,8 @@ import java.util.List;
 
 import it.jaschke.alexandria.R;
 
+import static com.grayraven.com.camera.Utilities.showAlertDialog;
+
 public class CaptureFragment extends android.support.v4.app.Fragment
         implements SurfaceHolder.Callback {
 
@@ -102,12 +104,15 @@ public class CaptureFragment extends android.support.v4.app.Fragment
     }
 
     public void setCamera(Camera camera) {
+
         stopPreviewAndFreeCamera();
         saveIsbn("");
         mHolder = mSurfaceView.getHolder();
         mHolder.addCallback(this);
         mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-        safeCameraOpen();
+        if(!safeCameraOpen()) {
+            return;
+        }
         if (mCamera != null) {
             Camera.Parameters params = mCamera.getParameters();
             params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
@@ -125,6 +130,8 @@ public class CaptureFragment extends android.support.v4.app.Fragment
             mCamera.startPreview();
         }
     }
+
+
 
     /**
      * When this function returns, mCamera will be null.
@@ -222,7 +229,7 @@ public class CaptureFragment extends android.support.v4.app.Fragment
     }
 
     private boolean safeCameraOpen() {
-        boolean qOpened = false;
+        boolean result = false;
 
         try {
             stopPreviewAndFreeCamera();
@@ -235,15 +242,22 @@ public class CaptureFragment extends android.support.v4.app.Fragment
                 if(cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
                     mCamera = Camera.open(i);
                     mCameraId = i;
+                    result = true;
                     break;
                 }
             }
-            qOpened = (mCamera != null);
+            result = (mCamera != null);
         } catch (Exception e) {
             Log.e(getString(R.string.app_name), "failed to open Camera");
             e.printStackTrace();
+            result = false;
         }
-        return qOpened;
+
+        if(!result) {
+            showAlertDialog(R.string.no_camera_error, getActivity());
+        }
+
+        return result;
     }
 
 

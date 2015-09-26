@@ -164,8 +164,10 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         BookDetail fragment = new BookDetail();
         fragment.setArguments(args);
 
+        // bug fix:  only use the right container in landscape orientation
+        boolean landscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
         int id = R.id.container;
-        if(findViewById(R.id.right_container) != null){
+        if(findViewById(R.id.right_container) != null && landscape){
             id = R.id.right_container;
         }
         getSupportFragmentManager().beginTransaction()

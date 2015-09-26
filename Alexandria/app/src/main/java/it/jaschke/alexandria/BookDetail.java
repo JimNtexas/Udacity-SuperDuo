@@ -1,13 +1,18 @@
 package it.jaschke.alexandria;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,6 +22,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.List;
 
 import it.jaschke.alexandria.data.AlexandriaContract;
 import it.jaschke.alexandria.services.BookService;
@@ -32,7 +39,7 @@ public class BookDetail extends Fragment implements LoaderManager.LoaderCallback
     private String ean;
     private String bookTitle;
     private ShareActionProvider shareActionProvider;
-
+    private boolean isLandscape;
     public BookDetail(){
     }
 
@@ -41,6 +48,14 @@ public class BookDetail extends Fragment implements LoaderManager.LoaderCallback
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         setRetainInstance(true);
+
+        int currentOrientation = getResources().getConfiguration().orientation;
+        if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+            isLandscape = true;
+        }
+        else {
+            isLandscape = false;
+        }
     }
 
 
@@ -64,6 +79,7 @@ public class BookDetail extends Fragment implements LoaderManager.LoaderCallback
                 getActivity().getSupportFragmentManager().popBackStack();
             }
         });
+        manageTabletStack();
         return rootView;
     }
 
@@ -98,11 +114,14 @@ public class BookDetail extends Fragment implements LoaderManager.LoaderCallback
         bookTitle = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.TITLE));
         ((TextView) rootView.findViewById(R.id.fullBookTitle)).setText(bookTitle);
 
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+       Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text)+bookTitle);
+        shareActionProvider.setShareIntent(null);
         shareActionProvider.setShareIntent(shareIntent);
+
+
 
         String bookSubTitle = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.SUBTITLE));
         ((TextView) rootView.findViewById(R.id.fullBookSubTitle)).setText(bookSubTitle);
@@ -131,14 +150,42 @@ public class BookDetail extends Fragment implements LoaderManager.LoaderCallback
 
     @Override
     public void onLoaderReset(android.support.v4.content.Loader<Cursor> loader) {
-
     }
 
     @Override
     public void onPause() {
-        super.onDestroyView();
+        super.onPause();
+        //Bug fix:  this code causes crashes, the correct fix is to always have a right_container, even it isn't used in portrait orientation
+       /* super.onDestroyView();
         if(MainActivity.IS_TABLET && rootView.findViewById(R.id.right_container)==null){
             getActivity().getSupportFragmentManager().popBackStack();
+        }*/
+    }
+
+    /**
+     *  Manage the stack of BookDetail to prevent multiple copies from persisting on the backstack
+     *  TODO:  Refactor the layouts so this function isn't needed
+     */
+    private void manageTabletStack() {
+
+        if(!MainActivity.IS_TABLET) {
+            return;
+        }
+        FragmentManager fm = getFragmentManager();
+
+        int bookEntryCount = 0;
+        for(int entry = 0; entry < fm.getBackStackEntryCount(); entry++){
+            int id = fm.getBackStackEntryAt(entry).getId();
+            String frag = fm.getBackStackEntryAt(id).getName();
+            if(frag != null && frag.contains("Book Detail")) {
+                bookEntryCount++;
+            }
+        }
+
+        if(bookEntryCount > 1 && isLandscape) {
+            fm.popBackStack();
+            bookEntryCount--;
+            Log.d(TAG, "stack popped");
         }
     }
 }

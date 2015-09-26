@@ -64,6 +64,8 @@ public class myFetchService extends IntentService
             m_connection.addRequestProperty("X-Auth-Token",getString(R.string.api_key));
             m_connection.connect();
 
+            Log.d(LOG_TAG, "Api key:" + getString(R.string.api_key));
+
             // Read the input stream into a String
             InputStream inputStream = m_connection.getInputStream();
             StringBuffer buffer = new StringBuffer();

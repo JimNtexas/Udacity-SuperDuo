@@ -3,4 +3,4 @@
     <string name="api_key">DO NOT PUSH TO PUBLIC REPO</string>
 </resources>
 
-<!-- Hint:  use 
+<!-- Hint:  use git skip-worktree strings_api.xml -->

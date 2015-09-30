@@ -79,7 +79,6 @@ public class CaptureFragment extends android.support.v4.app.Fragment
 
     private void CaptureImage() {
         mCamera.takePicture(shutterCallback, rawCallback, jpegCallback);
-
     }
 
     @Override
@@ -131,8 +130,6 @@ public class CaptureFragment extends android.support.v4.app.Fragment
         }
     }
 
-
-
     /**
      * When this function returns, mCamera will be null.
      */
@@ -146,7 +143,6 @@ public class CaptureFragment extends android.support.v4.app.Fragment
 
         }
     }
-
 
     private void SetupCallbacks() {
         rawCallback = new Camera.PictureCallback() {

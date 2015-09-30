@@ -34,5 +34,8 @@
     <string name="no_internet_error">Alexandria is sorry, but she can\'t seem to connect to the internet to perform this search</string>
     <string name="no_camera_error">Alexandria is sorry, but she can\'t find a suitable camera</string>
     <string name="capture_image">Take Picture</string>
+    <string name="base_url"  translatable="false">https://www.googleapis.com/books/v1/volumes?</string>
+    <string name="image_success">Image retrieval success</string>
+    <string name="image_failure">Image retrieval failed</string>
 
 </resources>

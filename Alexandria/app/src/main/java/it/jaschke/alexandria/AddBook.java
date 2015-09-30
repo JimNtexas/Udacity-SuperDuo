@@ -100,6 +100,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                 clearIsbnPref();
                 clearFields();
                 hideSoftKeyboard(getActivity());
+                //show the capture screen
                 android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.container, fragment, fragment.getClass().getSimpleName());
                 ft.addToBackStack(null);
@@ -122,11 +123,14 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             }
         });
 
+        // Next button
         rootView.findViewById(R.id.save_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d(TAG, "Next button clicked");
+                getLoaderManager().destroyLoader(LOADER_ID); //Bug fix:  without this call the next search will return stale data
                 ean.setText("");
-                clearFields(); // NOTE: The original implementation did not clear the book details when a new search screen was loaded via the next button
+                clearFields(); // Bug fix: The original implementation did not clear the book details when a new search screen was loaded via the next button
                 clearIsbnPref();
             }
         });
@@ -272,7 +276,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
     @Override
     public void onLoaderReset(android.support.v4.content.Loader<Cursor> loader) {
-
+        Log.d(TAG, "onLoaderReset");
     }
 
     private void clearFields(){

@@ -170,13 +170,13 @@ public class CaptureFragment extends android.support.v4.app.Fragment
                 boolean result = !isbn.isEmpty();
                 if(result) {
                    saveIsbn(isbn);
-                   Toast.makeText(getActivity(), "Image retrieval success.", Toast.LENGTH_SHORT).show();
+                   Toast.makeText(getActivity(), R.string.image_success, Toast.LENGTH_SHORT).show();
                     Activity activity = getActivity();
                     Log.d(TAG, activity.getLocalClassName());
                     getActivity().getSupportFragmentManager().popBackStackImmediate();
                 } else {
                     saveIsbn("");
-                    Toast.makeText(getActivity(), "Image retrieval failed.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), R.string.image_failure, Toast.LENGTH_LONG).show();
                     stopPreviewAndFreeCamera();
                     setCamera(mCamera);
                 }

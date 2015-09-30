@@ -61,6 +61,7 @@ public class BookService extends IntentService {
      * parameters.
      */
     private void deleteBook(String ean) {
+        Log.d(TAG, "deleting: " + ean);
         if(ean!=null && (!ean.isEmpty())) { //Note: fixed a crashing bug caused when the caller passed an empty string here
             getContentResolver().delete(AlexandriaContract.BookEntry.buildBookUri(Long.parseLong(ean)), null, null);
         }
@@ -100,7 +101,7 @@ public class BookService extends IntentService {
         String bookJsonString = null;
 
         try {
-            final String FORECAST_BASE_URL = "https://www.googleapis.com/books/v1/volumes?";
+            final String FORECAST_BASE_URL =   this.getResources().getString(R.string.base_url);
             final String QUERY_PARAM = "q";
 
             final String ISBN_PARAM = "isbn:" + ean;

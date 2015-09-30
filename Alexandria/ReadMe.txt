@@ -1,7 +1,7 @@
 I have made several changes to the original application including:
 
 1) Added an image capture fragment that passes an image taken by the user to an Android BarcodeScanner object, which, if
-detects an Ean or Isbn bar code, passes the result back to the AddBook fragment.
+it detects an Ean or Isbn bar code, passes the result back to the AddBook fragment.
 
 2) I've handled several error cases, including no internet, no suitable camera, and no book matching the given isbn detected.
 

@@ -1,6 +1,8 @@
 package barqsoft.footballscores;
 
 import android.content.Context;
+import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -63,6 +65,10 @@ public class PagerFragment extends Fragment
         @Override
         public CharSequence getPageTitle(int position)
         {
+            int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+            if( currentapiVersion >= Build.VERSION_CODES.JELLY_BEAN && mPagerHandler.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
+                position = Utilies.inversePositionForRTL(position, getCount());  //thanks to Udacity student josen (Jose) for this suggestion
+            }
             return getDayName(getActivity(),System.currentTimeMillis()+((position-2)*86400000));
         }
         public String getDayName(Context context, long dateInMillis) {

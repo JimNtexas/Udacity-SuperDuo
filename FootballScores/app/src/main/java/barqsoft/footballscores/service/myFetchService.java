@@ -47,7 +47,6 @@ public class myFetchService extends IntentService
     {
         getData("n2");
         getData("p2");
-        sendUpdateIntent(this);
     }
 
     private void getData (String timeFrame)
@@ -56,6 +55,7 @@ public class myFetchService extends IntentService
         final String BASE_URL = "http://api.football-data.org/alpha/fixtures"; //Base URL
         final String QUERY_TIME_FRAME = "timeFrame"; //Time Frame parameter to determine days
         //final String QUERY_MATCH_DAY = "matchday";
+        Log.d(LOG_TAG, "Matchday = " + timeFrame);
 
         Uri fetch_build = Uri.parse(BASE_URL).buildUpon().
                 appendQueryParameter(QUERY_TIME_FRAME, timeFrame).build();
@@ -255,7 +255,7 @@ public class myFetchService extends IntentService
                     //log spam
 
                     //Log.v(LOG_TAG,match_id);
-                    //Log.v(LOG_TAG,mDate);
+                    Log.v(LOG_TAG,"Date: " + mDate);
                     //Log.v(LOG_TAG,mTime);
                     //Log.v(LOG_TAG,Home);
                     //Log.v(LOG_TAG,Away);
@@ -271,7 +271,8 @@ public class myFetchService extends IntentService
             inserted_data = mContext.getContentResolver().bulkInsert(
                     DatabaseContract.BASE_CONTENT_URI,insert_data);
 
-            Log.d(LOG_TAG, "Succesfully Inserted : " + String.valueOf(inserted_data));
+            Log.d(LOG_TAG, "Succesfully Inserted : " + String.valueOf(inserted_data) + " in to " + DatabaseContract.BASE_CONTENT_URI);
+            sendUpdateIntent(this);
         }
         catch (JSONException e)
         {

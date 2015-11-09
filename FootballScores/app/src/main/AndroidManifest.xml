@@ -7,6 +7,8 @@
         android:name="android.permission.INTERNET"
         android:maxSdkVersion="22" />
 
+    <uses-sdk android:minSdkVersion="14"/>
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -37,6 +39,25 @@
                 android:value="barqsoft.footballscores.MainActivity" />
         </activity>
         <service android:name=".service.myFetchService" />
+
+
+        <!-- Football Widget -->
+        <receiver
+            android:name=".widget.FootballWidgetProvider"
+            android:label="FootballWidget" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="barqsoft.footballscores.service.ACTION_DATA_UPDATED" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/widget_provider" />
+        </receiver>
+
+        <!-- Widget service -->
+        <service
+            android:name="barqsoft.footballscores.widget.FootballWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
     </application>
 
 </manifest>

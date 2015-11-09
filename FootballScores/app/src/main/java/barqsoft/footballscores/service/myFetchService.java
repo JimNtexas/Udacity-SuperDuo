@@ -19,11 +19,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.Vector;
+import java.util.Set;
 
 import barqsoft.footballscores.DatabaseContract;
 import barqsoft.footballscores.R;
+import barqsoft.footballscores.widget.FootballWidgetProvider;
 
 /**
  * Created by yehya khaled on 3/2/2015.
@@ -31,6 +34,9 @@ import barqsoft.footballscores.R;
 public class myFetchService extends IntentService
 {
     public static final String LOG_TAG = "myFetchService";
+    public static final String ACTION_DATA_UPDATED =  "barqsoft.footballscores.service.ACTION_DATA_UPDATED";
+
+    private static Vector<ContentValues> mStaticValues = new Vector<ContentValues>();
     public myFetchService()
     {
         super("myFetchService");
@@ -41,6 +47,7 @@ public class myFetchService extends IntentService
     {
         getData("n2");
         getData("p2");
+        sendUpdateIntent(this);
     }
 
     private void getData (String timeFrame)
@@ -62,7 +69,7 @@ public class myFetchService extends IntentService
             URL fetch = new URL(fetch_build.toString());
             m_connection = (HttpURLConnection) fetch.openConnection();
             m_connection.setRequestMethod("GET");
-            m_connection.addRequestProperty("X-Auth-Token", getString(R.string.api_key));
+            m_connection.addRequestProperty("X-Auth-Token", getString(R.string.api_key));  //todo: remove before release
             m_connection.connect();
 
             // Read the input stream into a String
@@ -174,7 +181,6 @@ public class myFetchService extends IntentService
         String match_id = null;
         String match_day = null;
 
-
         try {
             JSONArray matches = new JSONObject(JSONdata).getJSONArray(FIXTURES);
 
@@ -265,13 +271,21 @@ public class myFetchService extends IntentService
             inserted_data = mContext.getContentResolver().bulkInsert(
                     DatabaseContract.BASE_CONTENT_URI,insert_data);
 
-            Log.d(LOG_TAG,"Succesfully Inserted : " + String.valueOf(inserted_data));
+            Log.d(LOG_TAG, "Succesfully Inserted : " + String.valueOf(inserted_data));
         }
         catch (JSONException e)
         {
             Log.e(LOG_TAG,e.getMessage());
         }
 
+    }
+
+    public static void sendUpdateIntent(Context context)
+    {
+        Intent intent = new Intent(context, FootballWidgetProvider.class);
+        intent.setAction(ACTION_DATA_UPDATED);
+        Log.d(LOG_TAG, "requesting widget update");
+        context.sendBroadcast(intent);
     }
 }
 

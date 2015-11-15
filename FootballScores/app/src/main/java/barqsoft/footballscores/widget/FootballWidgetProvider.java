@@ -3,66 +3,84 @@ package barqsoft.footballscores.widget;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.net.Uri;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-import barqsoft.footballscores.MainActivity;
 import barqsoft.footballscores.R;
 import barqsoft.footballscores.service.myFetchService;
+import barqsoft.footballscores.widget.FootballWidgetRemoteViewService;
 
-/**
- * Created by Jim on 11/8/2015.
- */
 public class FootballWidgetProvider extends AppWidgetProvider {
 
-    public static final String TAG = "FootballWidgetProvider";
+    private static final String TAG = "FootballWidgetProvider";
+    public static final String EXTRA_STRING = "barqsoft.footballscores.widget.EXTRA_String";
 
-    private String[] dataArray = { "this is line one", "this is line two", "this is line three"};
-
-    @Override
-    public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        context.startService(new Intent(context, FootballWidgetService.class));
+    public FootballWidgetProvider(Context applicationContext, Intent intent) {
     }
 
-    @Override
-    public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager,
-                                          int appWidgetId, Bundle newOptions) {
-        context.startService(new Intent(context, FootballWidgetService.class));
-    }
+	@Override
+	public void onUpdate(Context context, AppWidgetManager appWidgetManager,
+			int[] appWidgetIds) {
+
+        Log.d(TAG,"onUpdate");
+        for (int widgetId : appWidgetIds) {
+            RemoteViews mView = updateWidgetListView(context, appWidgetManager, widgetId);
+            Log.i("wprovider", "widgetId: " + widgetId);
+            final Intent onItemClick = new Intent(context, FootballWidgetProvider.class);
+
+            // Adding collection list item handler
+           // onItemClick.setAction(ACTION_TOAST);
+            onItemClick.setData(Uri.parse(onItemClick
+                    .toUri(Intent.URI_INTENT_SCHEME)));
+            PendingIntent onClickPendingIntent = PendingIntent
+                    .getBroadcast(context, 0, onItemClick,
+                            PendingIntent.FLAG_UPDATE_CURRENT);
+            mView.setPendingIntentTemplate(R.id.widgetCollectionList,
+                    onClickPendingIntent);
+
+            appWidgetManager.updateAppWidget(widgetId, mView);
+        }
+		super.onUpdate(context, appWidgetManager, appWidgetIds);
+	}
 
     @Override
-    public void onReceive(@NonNull Context context, @NonNull Intent intent) {
-        super.onReceive(context, intent);
-        if (myFetchService.ACTION_DATA_UPDATED.equals(intent.getAction())) {
-
-            Intent widgetService = new Intent(context, FootballWidgetService.class);
-            widgetService.putExtra("data", dataArray);
-            context.startService(widgetService);
+    public void onReceive(Context context, Intent intent) {
+        Log.d(TAG, "onReceive called with " + intent.getAction());
+        if(intent.getAction().equals(myFetchService.ACTION_DATA_UPDATED)) {
+            Log.d(TAG,"UPDATE WIDGET DATA");
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
+                    new ComponentName(context, getClass()));
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widgetCollectionList);
 
         }
-    }
-   /* private void update_scores(Context context)
-    {
-      Log.d(TAG, "Widget starting myFetchService");
-       context.startService(new Intent(context, myFetchService.class));
-    }*/
 
-
-    @Override
-    public void onEnabled(Context context) {
-        super.onEnabled(context);
-        Log.d(TAG, "onEnabled");
+        super.onReceive(context, intent);
     }
 
-    @Override
-    public void onRestored(Context context, int[] oldWidgetIds, int[] newWidgetIds) {
-        super.onRestored(context, oldWidgetIds, newWidgetIds);
-        Log.d(TAG, "onRestored");
-    }
+    private RemoteViews updateWidgetListView(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
+        Log.d(TAG,"updateWidgetListView");
+		//which layout to show on widget
+		RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
+				R.layout.widget_provider_layout);
+		
+		//RemoteViews Service needed to provide adapter for ListView
+		Intent svcIntent = new Intent(context, FootballWidgetRemoteViewService.class);
+		//passing app widget id to that RemoteViews Service
+        svcIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+		//setting a unique Uri to the intent
+        svcIntent.setData(Uri.parse(svcIntent.toUri(Intent.URI_INTENT_SCHEME)));
+		//setting adapter to listview of the widget
+        remoteViews.setRemoteAdapter(appWidgetId, R.id.widgetCollectionList, svcIntent);
+		return remoteViews;
+	}
 
+    public FootballWidgetProvider() {
+        super();
+    }
 
 }

@@ -55,7 +55,8 @@
 
         <!-- Widget service -->
         <service
-            android:name="barqsoft.footballscores.widget.FootballWidgetService"
+            android:name=".widget.FootballWidgetRemoteViewService"
+            android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
     </application>

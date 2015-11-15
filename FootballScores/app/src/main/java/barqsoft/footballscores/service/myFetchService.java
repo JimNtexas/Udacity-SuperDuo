@@ -26,6 +26,7 @@ import java.util.Set;
 
 import barqsoft.footballscores.DatabaseContract;
 import barqsoft.footballscores.R;
+import barqsoft.footballscores.widget.FootballWidgetDataProvider;
 import barqsoft.footballscores.widget.FootballWidgetProvider;
 
 /**
@@ -40,6 +41,12 @@ public class myFetchService extends IntentService
     public myFetchService()
     {
         super("myFetchService");
+    }
+
+    @Override
+    public void onDestroy() {
+        sendUpdateIntent(this);
+        super.onDestroy();
     }
 
     @Override
@@ -183,13 +190,13 @@ public class myFetchService extends IntentService
 
         try {
             JSONArray matches = new JSONObject(JSONdata).getJSONArray(FIXTURES);
+            final String DUMMYLEAGUE = "357";
 
 
             //ContentValues to be inserted
             Vector<ContentValues> values = new Vector <ContentValues> (matches.length());
             for(int i = 0;i < matches.length();i++)
             {
-
                 JSONObject match_data = matches.getJSONObject(i);
                 League = match_data.getJSONObject(LINKS).getJSONObject(SOCCER_SEASON).
                         getString("href");
@@ -202,7 +209,8 @@ public class myFetchService extends IntentService
                         League.equals(SERIE_A)             ||
                         League.equals(BUNDESLIGA1)         ||
                         League.equals(BUNDESLIGA2)         ||
-                        League.equals(PRIMERA_DIVISION) ) //  || League.equals(DUMMYLEAGUE))
+                        League.equals(PRIMERA_DIVISION)    ||
+                        League.equals(DUMMYLEAGUE))
                 {
                     match_id = match_data.getJSONObject(LINKS).getJSONObject(SELF).
                             getString("href");
@@ -272,7 +280,6 @@ public class myFetchService extends IntentService
                     DatabaseContract.BASE_CONTENT_URI,insert_data);
 
             Log.d(LOG_TAG, "Succesfully Inserted : " + String.valueOf(inserted_data) + " in to " + DatabaseContract.BASE_CONTENT_URI);
-            sendUpdateIntent(this);
         }
         catch (JSONException e)
         {

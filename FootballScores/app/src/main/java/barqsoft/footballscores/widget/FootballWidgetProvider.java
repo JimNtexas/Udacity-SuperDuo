@@ -7,9 +7,12 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import barqsoft.footballscores.MainActivity;
 import barqsoft.footballscores.R;
 import barqsoft.footballscores.service.myFetchService;
 import barqsoft.footballscores.widget.FootballWidgetRemoteViewService;
@@ -26,26 +29,39 @@ public class FootballWidgetProvider extends AppWidgetProvider {
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager,
 			int[] appWidgetIds) {
 
-        Log.d(TAG,"onUpdate");
+        Log.d(TAG, "onUpdate");
         for (int widgetId : appWidgetIds) {
+
             RemoteViews mView = updateWidgetListView(context, appWidgetManager, widgetId);
             Log.i("wprovider", "widgetId: " + widgetId);
-            final Intent onItemClick = new Intent(context, FootballWidgetProvider.class);
 
-            // Adding collection list item handler
-           // onItemClick.setAction(ACTION_TOAST);
+            // Create an Intent to launch MainActivity
+            Intent intent = new Intent(context, MainActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+            mView.setOnClickPendingIntent(R.id.widgetLayoutMain, pendingIntent);
+
+            /*// Adding collection list item handler
+            final Intent onItemClick = new Intent(context, FootballWidgetProvider.class);
+            onItemClick.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             onItemClick.setData(Uri.parse(onItemClick
                     .toUri(Intent.URI_INTENT_SCHEME)));
-            PendingIntent onClickPendingIntent = PendingIntent
-                    .getBroadcast(context, 0, onItemClick,
-                            PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent onClickPendingIntent =PendingIntent.getActivity(context, 0, intent, 0);
             mView.setPendingIntentTemplate(R.id.widgetCollectionList,
                     onClickPendingIntent);
+
+             */
+
+
 
             appWidgetManager.updateAppWidget(widgetId, mView);
         }
 		super.onUpdate(context, appWidgetManager, appWidgetIds);
 	}
+
+    @Override
+    public void onEnabled(Context context) {
+        super.onEnabled(context);
+    }
 
     @Override
     public void onReceive(Context context, Intent intent) {

@@ -37,7 +37,7 @@
     <string name="no_results">Sorry, there are matches today</string>
     <string name="todays_matches">Today\'s Matches</string>
     <string name="football_matches">Football Matches</string>
-    <string name="widget_icon_content_desc">List of today\'s matches</string>
+    <string name="widget_icon_content_desc">Widget listing today\'s scores</string>
 </resources>
 
 

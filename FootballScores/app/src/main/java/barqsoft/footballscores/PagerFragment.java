@@ -15,14 +15,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by yehya khaled on 2/27/2015.
  */
 public class PagerFragment extends Fragment
 {
-    public static final int NUM_PAGES = 9;
+    public static final int NUM_PAGES = 5;
     public ViewPager mPagerHandler;
     private myPageAdapter mPagerAdapter;
     private MainScreenFragment[] viewFragments = new MainScreenFragment[NUM_PAGES];
@@ -43,6 +45,7 @@ public class PagerFragment extends Fragment
         mPagerHandler.setCurrentItem(MainActivity.current_fragment);
         return rootView;
     }
+
     private class myPageAdapter extends FragmentStatePagerAdapter
     {
         @Override
@@ -66,7 +69,7 @@ public class PagerFragment extends Fragment
         public CharSequence getPageTitle(int position)
         {
             int currentapiVersion = android.os.Build.VERSION.SDK_INT;
-            if( currentapiVersion >= Build.VERSION_CODES.JELLY_BEAN && mPagerHandler.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
+            if( currentapiVersion >= Build.VERSION_CODES.JELLY_BEAN_MR1 && mPagerHandler.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
                 position = Utilies.inversePositionForRTL(position, getCount());  //thanks to Udacity student josen (Jose) for this suggestion
             }
             return getDayName(getActivity(),System.currentTimeMillis()+((position-2)*86400000));

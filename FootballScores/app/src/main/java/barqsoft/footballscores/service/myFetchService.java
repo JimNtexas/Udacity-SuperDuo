@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -24,6 +25,7 @@ import java.util.TimeZone;
 import java.util.Vector;
 import java.util.Set;
 
+import barqsoft.footballscores.BuildConfig;
 import barqsoft.footballscores.DatabaseContract;
 import barqsoft.footballscores.R;
 import barqsoft.footballscores.widget.FootballWidgetDataProvider;
@@ -61,7 +63,6 @@ public class myFetchService extends IntentService
         //Creating fetch URL
         final String BASE_URL = "http://api.football-data.org/alpha/fixtures"; //Base URL
         final String QUERY_TIME_FRAME = "timeFrame"; //Time Frame parameter to determine days
-        //final String QUERY_MATCH_DAY = "matchday";
         Log.d(LOG_TAG, "Matchday = " + timeFrame);
 
         Uri fetch_build = Uri.parse(BASE_URL).buildUpon().
@@ -160,7 +161,8 @@ public class myFetchService extends IntentService
         final String PRIMERA_LIGA = "402";
         final String Bundesliga3 = "403";
         final String EREDIVISIE = "404";
-       // final String DUMMYLEAGUE = "357";
+        final String DUMMYLEAGUE = BuildConfig.DEBUG ? "357" : "0";
+        Log.d(LOG_TAG, DUMMYLEAGUE);
 
 
         final String SEASON_LINK = "http://api.football-data.org/alpha/soccerseasons/";
@@ -190,8 +192,6 @@ public class myFetchService extends IntentService
 
         try {
             JSONArray matches = new JSONObject(JSONdata).getJSONArray(FIXTURES);
-            final String DUMMYLEAGUE = "357";
-
 
             //ContentValues to be inserted
             Vector<ContentValues> values = new Vector <ContentValues> (matches.length());
@@ -201,16 +201,22 @@ public class myFetchService extends IntentService
                 League = match_data.getJSONObject(LINKS).getJSONObject(SOCCER_SEASON).
                         getString("href");
                 League = League.replace(SEASON_LINK,"");
+                //todo:  allow user to select desired leagues
                 //This if statement controls which leagues we're interested in the data from.
                 //add leagues here in order to have them be added to the DB.
                 // If you are finding no data in the app, check that this contains all the leagues.
                 // If it doesn't, that can cause an empty DB, bypassing the dummy data routine.
-                if(     League.equals(PREMIER_LEAGUE)      ||
-                        League.equals(SERIE_A)             ||
-                        League.equals(BUNDESLIGA1)         ||
-                        League.equals(BUNDESLIGA2)         ||
-                        League.equals(PRIMERA_DIVISION)    ||
-                        League.equals(DUMMYLEAGUE))
+                if(     League.equals(PREMIER_LEAGUE)       ||
+                        League.equals(SERIE_A)              ||
+                        League.equals(BUNDESLIGA1)          ||
+                        League.equals(BUNDESLIGA2)          ||
+                        League.equals(PRIMERA_DIVISION)     ||
+                        League.equals(SEGUNDA_DIVISION)     ||
+                        League.equals(SERIE_A)              ||
+                        League.equals(PRIMERA_LIGA)         ||
+                        League.equals(Bundesliga3)          ||
+                        League.equals(EREDIVISIE)           ||
+                        League.equals(DUMMYLEAGUE)  )
                 {
                     match_id = match_data.getJSONObject(LINKS).getJSONObject(SELF).
                             getString("href");

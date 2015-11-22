@@ -24,13 +24,12 @@
     <string name="about">About</string>
     <string name="title_activity_about">AboutActivity</string>
     <string name="about_text">
-        This Application get Football Matches Score for the Premier League,Seria A,Bundesliga,Primera Division
-        and the Uefa Champions League.
-        All Matches data are acquired from football-data.org free API.
-        All team Logos are acquired from http://hdlogo.wordpress.com/ upon requesting permission form the owner.
-        The original version of this app was created by Yahia Khalid Ibn El Walid Ahmed. \nThis version was modified by Jim Howard for the Android Nanodegree program.
-        \nTo report any bugs,or suggestions do not hesitate to send a mail to y.k.ibnelwalid@gmail.com.
-
+        This Application get Football Matches Score for various Leagues.\n\n
+        All Matches data are acquired from football-data.org free API.\n\n
+        All team Logos are acquired from http://hdlogo.wordpress.com/ upon requesting permission form the owner.\n\n
+        The original version of this app was created by Yahia Khalid Ibn El Walid Ahmed. \n\n
+        This version was modified by Jim Howard for the Android Nanodegree program.\n\n
+        To report any bugs,or suggestions do not hesitate to send a mail to y.k.ibnelwalid@gmail.com.\n\n
         During the off season, fake data will be added to the app.
     </string>
     <string name="widget_text">This is a widget probably.</string>
@@ -38,6 +37,7 @@
     <string name="no_results">Sorry, there are matches today</string>
     <string name="todays_matches">Today\'s Matches</string>
     <string name="football_matches">Football Matches</string>
+    <string name="widget_icon_content_desc">List of today\'s matches</string>
 </resources>
 
 

@@ -17,7 +17,6 @@
             android:layout_weight="1"
             android:orientation="vertical">
             <ImageView
-                android:contentDescription="PUT CONTENT DESC HERE"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -63,7 +62,6 @@
             android:layout_weight="1"
             android:orientation="vertical">
             <ImageView
-                android:contentDescription="PUT CONTENT DESC HERE"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -85,4 +83,4 @@
     </FrameLayout>
 </LinearLayout>
 
-
+    <!--android:contentDescription="PUT CONTENT DESC HERE"-->

@@ -23,7 +23,8 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_launcher" />
+                android:src="@drawable/ic_launcher"
+                />
 
             <LinearLayout
                 android:id="@+id/widgetTopBar"
@@ -61,8 +62,8 @@
         <ListView
             android:id="@+id/widgetCollectionList"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-        </ListView>
+            android:layout_height="wrap_content"
+            android:background="@color/icons" />
 
     </LinearLayout>
 

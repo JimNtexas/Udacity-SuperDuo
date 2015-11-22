@@ -1,5 +1,6 @@
 package barqsoft.footballscores.widget;
 
+import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -8,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -40,18 +42,19 @@ public class FootballWidgetProvider extends AppWidgetProvider {
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
             mView.setOnClickPendingIntent(R.id.widgetLayoutMain, pendingIntent);
 
-            /*// Adding collection list item handler
-            final Intent onItemClick = new Intent(context, FootballWidgetProvider.class);
-            onItemClick.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            onItemClick.setData(Uri.parse(onItemClick
-                    .toUri(Intent.URI_INTENT_SCHEME)));
-            PendingIntent onClickPendingIntent =PendingIntent.getActivity(context, 0, intent, 0);
-            mView.setPendingIntentTemplate(R.id.widgetCollectionList,
-                    onClickPendingIntent);
+            // Set up the collection
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                setRemoteAdapter(context, mView);
+            } else {
+                setRemoteAdapterV11(context, mView);
+            }
 
-             */
-
-
+            Intent clickIntentTemplate = new Intent(context, MainActivity.class);
+            clickIntentTemplate.addFlags(Intent.URI_INTENT_SCHEME);
+            PendingIntent clickPendingIntentTemplate =TaskStackBuilder.create(context)
+                    .addNextIntentWithParentStack(clickIntentTemplate)
+                    .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+            mView.setPendingIntentTemplate(R.id.widgetCollectionList, clickPendingIntentTemplate);
 
             appWidgetManager.updateAppWidget(widgetId, mView);
         }
@@ -97,6 +100,18 @@ public class FootballWidgetProvider extends AppWidgetProvider {
 
     public FootballWidgetProvider() {
         super();
+    }
+
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    private void setRemoteAdapter(Context context, @NonNull final RemoteViews views) {
+        views.setRemoteAdapter(R.id.widgetCollectionList,
+                new Intent(context, FootballWidgetRemoteViewService.class));
+    }
+
+    @SuppressWarnings("deprecation")
+    private void setRemoteAdapterV11(Context context, @NonNull final RemoteViews views) {
+        views.setRemoteAdapter(0, R.id.widgetCollectionList,
+                new Intent(context, FootballWidgetRemoteViewService.class));
     }
 
 }

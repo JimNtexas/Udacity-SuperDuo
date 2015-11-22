@@ -16,7 +16,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import barqsoft.footballscores.MainActivity;
 import barqsoft.footballscores.R;
+import barqsoft.footballscores.service.myFetchService;
 
 /**
  * Created by Jim on 11/14/2015.
@@ -47,17 +49,20 @@ public class FootballWidgetDataProvider implements RemoteViewsService.RemoteView
         return position;
     }
 
-    /*
-     *Similar to getView of Adapter where instead of View
-     *we return RemoteViews
-     *
-     */
     @Override
     public RemoteViews getViewAt(int position) {
-        Log.d(TAG,"getViewAt: " + position + " data: " + dataList.get(position));
+        Log.d(TAG, "getViewAt: " + position + " data: " + dataList.get(position));
         final RemoteViews remoteView = new RemoteViews(
                 context.getPackageName(), R.layout.widget_row);
         remoteView.setTextViewText(R.id.widget_row_string, dataList.get(position));
+
+        final Intent fillInIntent = new Intent();
+        fillInIntent.setAction(myFetchService.ACTION_DATA_UPDATED);
+        final Bundle bundle = new Bundle();
+        fillInIntent.putExtras(bundle);
+        remoteView.setOnClickFillInIntent(R.id.widget_row_string, fillInIntent);
+
+
         return remoteView;
     }
 

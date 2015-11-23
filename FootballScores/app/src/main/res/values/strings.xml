@@ -38,6 +38,9 @@
     <string name="todays_matches">Today\'s Matches</string>
     <string name="football_matches">Football Matches</string>
     <string name="widget_icon_content_desc">Widget listing today\'s scores</string>
+    <string name="home_team_crest_desc">Home Team Crest</string>
+    <string name="away_team_crest_desc">Away Team Crest</string>
+    <string name="app_launcher_icon">Football Application Icon</string>
 </resources>
 
 

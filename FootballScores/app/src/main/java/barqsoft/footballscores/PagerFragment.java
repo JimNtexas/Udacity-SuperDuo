@@ -1,5 +1,6 @@
 package barqsoft.footballscores;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -65,9 +66,11 @@ public class PagerFragment extends Fragment
             super(fm);
         }
         // Returns the page title for the top indicator
+
         @Override
         public CharSequence getPageTitle(int position)
         {
+            @SuppressLint("NewApi")
             int currentapiVersion = android.os.Build.VERSION.SDK_INT;
             if( currentapiVersion >= Build.VERSION_CODES.JELLY_BEAN_MR1 && mPagerHandler.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
                 position = Utilies.inversePositionForRTL(position, getCount());  //thanks to Udacity student josen (Jose) for this suggestion

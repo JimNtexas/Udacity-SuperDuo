@@ -28,12 +28,11 @@ public class FootballWidgetDataProvider implements RemoteViewsService.RemoteView
     private static final String TAG = "FootballWgtDataProvider";
     private ArrayList<String> dataList = new ArrayList<String>();
     private Context context = null;
-    private int appWidgetId;
 
     public FootballWidgetDataProvider(Context context, Intent intent) {
         Log.d(TAG,"ctor");
         this.context = context;
-        appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
+        int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID);
 
         getData();
@@ -76,10 +75,16 @@ public class FootballWidgetDataProvider implements RemoteViewsService.RemoteView
             SimpleDateFormat mformat = new SimpleDateFormat("yyyy-MM-dd"); // To get local formatting use getDateInstance(), getDateTimeInstance(), or getTimeInstance(), or use new SimpleDateFormat(String template, Locale locale) with for example Locale.US for ASCII dates
             args[0] = mformat.format(systemDate);
             String result;
+            String noResults = context.getResources().getString(R.string.no_results);
+
             Cursor cursor = context.getContentResolver().query(uri, null, null, args, null);
+            if(cursor == null) {
+                Log.e(TAG, "database cursor null");
+                dataList.add(noResults);
+                return;
+            }
             if (!cursor.moveToFirst()) {
                 Log.e(TAG, "Database empty!");
-                String noResults = context.getResources().getString(R.string.no_results);
                 dataList.add(noResults);
             } else {
                 int cnt = 0;

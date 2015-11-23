@@ -28,7 +28,7 @@ public class WidgetData {
     public String getDisplayString() {
         String result = "";
         if( Integer.parseInt(home_goals) < 0 || Integer.parseInt(away_goals) < 0 ) {
-            result = result.format("%s  -  %s  - %s", home,time,away);
+            result =                                                   result.format("%s  -  %s  - %s", home,time,away);
         } else {
             result = result.format("%s : %s  -  %s : %s", home, home_goals,away,away_goals);
         }

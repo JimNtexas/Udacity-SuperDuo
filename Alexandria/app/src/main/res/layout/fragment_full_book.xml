@@ -17,7 +17,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|top">
 
-                <!-- todo:   Consider adding android:paddingEnd="20dp" to better support right-to-left layouts (at line 33) -->
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -26,6 +25,7 @@
                     android:textIsSelectable="true"
                     android:textStyle="bold"
                     android:paddingRight="20dp"
+                    android:paddingEnd="20dp"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"

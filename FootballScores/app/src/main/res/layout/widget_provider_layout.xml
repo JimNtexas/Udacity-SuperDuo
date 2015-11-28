@@ -16,7 +16,9 @@
             android:background="#aaDEDFDE"
             android:orientation="horizontal"
             android:paddingLeft="5dp"
-            android:paddingRight="5dp" >
+            android:paddingRight="5dp"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp">
 
             <ImageView
                 android:id="@+id/widgetImgLauncher"

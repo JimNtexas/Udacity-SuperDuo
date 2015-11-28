@@ -87,7 +87,6 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             @Override
             public void afterTextChanged(Editable s) {
                 String ean =s.toString();
-                Log.d(TAG, "after text changed ean: " + ean + " - " + ean.length());
                 enableButton(btnScan, ean.length() == 0);
                 enableButton(btnSearch, ean.length() > 0);
             }
@@ -157,7 +156,8 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     }
 
     private void startBookSearch(String isbn) {
-        Log.d(TAG, "startBookSearch: " + ean);
+        Log.d(TAG, "startBookSearch:");
+        Log.d(TAG, isbn);
 
         if(!internetAvailable(getActivity())) {
             showAlertDialog(R.string.no_internet_error, getActivity());
@@ -206,7 +206,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     @Override
     public void onPause() {
         super.onPause();
-        Log.d(TAG, "addbook paused");
+        Log.d(TAG, "onPause");
     }
 
     private String getIsbnFromPrefs() {
@@ -216,7 +216,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     }
 
     private void clearIsbnPref() {
-        Log.i(TAG, "Isbn cleared from prefs");
+        Log.i(TAG, "clearIsbnPref");
         SharedPreferences prefs = getActivity().getSharedPreferences(getActivity().getLocalClassName(), Context.MODE_PRIVATE);
         prefs.edit().putString(CaptureFragment.ISBN_STRING, "").commit();
     }
@@ -257,6 +257,9 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         ((TextView) rootView.findViewById(R.id.bookSubTitle)).setText(bookSubTitle);
 
         String authors = data.getString(data.getColumnIndex(AlexandriaContract.AuthorEntry.AUTHOR));
+        if(authors == null) { //bug fix:  prevent an exception in the split statement
+            authors = new String();
+        }
         String[] authorsArr = authors.split(",");
         ((TextView) rootView.findViewById(R.id.authors)).setLines(authorsArr.length);
         ((TextView) rootView.findViewById(R.id.authors)).setText(authors.replace(",","\n"));

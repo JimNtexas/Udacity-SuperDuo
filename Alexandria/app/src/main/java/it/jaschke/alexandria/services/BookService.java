@@ -87,8 +87,8 @@ public class BookService extends IntentService {
                 null, // values for "where" clause
                 null  // sort order
         );
-        //TODO:  Method invocation 'bookEntry.getCount()' at line 87 may produce 'java.lang.NullPointerException'
-        if(bookEntry.getCount()>0){
+
+        if(bookEntry == null || bookEntry.getCount()>0){
             Log.i(TAG, "no book found");
             bookEntry.close();
             return;
@@ -103,14 +103,23 @@ public class BookService extends IntentService {
         try {
             final String FORECAST_BASE_URL =   this.getResources().getString(R.string.base_url);
             final String QUERY_PARAM = "q";
+            String ean10 = ean;
+            if(ean.length() == 13) {
+                // there seems to have been a change in the googlebooks api
+                // at least for me, isbn queries  now work only with 10 digit isbn numbers.
+                // This was not the case prior to my initial submission of this project
+                ean10 = ean.substring(3);
+                Log.d(TAG, "EAN truncated to 10 digits: " + ean10);
+            }
 
-            final String ISBN_PARAM = "isbn:" + ean;
+            final String ISBN_PARAM = "isbn:" + ean10;
 
             Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
                     .appendQueryParameter(QUERY_PARAM, ISBN_PARAM)
                     .build();
 
             URL url = new URL(builtUri.toString());
+            Log.d(TAG, "Connecting to: " + url.toString());
 
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
@@ -201,6 +210,7 @@ public class BookService extends IntentService {
             if(bookInfo.has(AUTHORS)) {
                 writeBackAuthors(ean, bookInfo.getJSONArray(AUTHORS));
             }
+
             if(bookInfo.has(CATEGORIES)){
                 writeBackCategories(ean,bookInfo.getJSONArray(CATEGORIES) );
             }

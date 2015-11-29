@@ -6,3 +6,5 @@ See https://github.com/eosrei/Udacity-SuperDuo-StarterKit for details.
 
 The api key for the Football database should be saved in 
 FootballScores\app\src\main\res\values\strings_api.xml
+
+Debug builds of the Football app will include Dummy League data.

@@ -103,16 +103,16 @@ public class BookService extends IntentService {
         try {
             final String FORECAST_BASE_URL =   this.getResources().getString(R.string.base_url);
             final String QUERY_PARAM = "q";
-            String ean10 = ean;
+          /*  String ean10 = ean;
             if(ean.length() == 13) {
                 // there seems to have been a change in the googlebooks api
                 // at least for me, isbn queries  now work only with 10 digit isbn numbers.
                 // This was not the case prior to my initial submission of this project
                 ean10 = ean.substring(3);
                 Log.d(TAG, "EAN truncated to 10 digits: " + ean10);
-            }
+            }*/
 
-            final String ISBN_PARAM = "isbn:" + ean10;
+            final String ISBN_PARAM = "isbn:" + ean;
 
             Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
                     .appendQueryParameter(QUERY_PARAM, ISBN_PARAM)
